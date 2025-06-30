@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Protectors Portal - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+        }
+        .content {
+            transition: margin-left 0.3s ease;
+        }
+        .content.expanded {
+            margin-left: 70px;
+        }
+        .chart-container {
+            height: 250px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                z-index: 100;
+                left: -250px;
+            }
+            .sidebar.show {
+                left: 0;
+            }
+            .content {
+                margin-left: 0 !important;
+            }
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar bg-green-800 text-white w-64 flex-shrink-0 flex flex-col">
+            <div class="p-4 flex items-center border-b border-green-700">
+                <img src="https://via.placeholder.com/40" alt="Logo" class="w-8 h-8 rounded-full">
+                <span class="logo-text ml-3 font-bold text-lg">PPP Admin</span>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <nav class="mt-4">
+                    <div class="px-4 mb-6">
+                        <div class="text-green-200 uppercase text-xs font-semibold tracking-wider nav-text">Main</div>
+                    </div>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700 active-nav">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="nav-text ml-3">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-school"></i>
+                        <span class="nav-text ml-3">Schools & Clubs</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-trophy"></i>
+                        <span class="nav-text ml-3">Leaderboard</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-book"></i>
+                        <span class="nav-text ml-3">Content Management</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-brain"></i>
+                        <span class="nav-text ml-3">Wisdom Vault</span>
+                    </a>
+                    
+                    <div class="px-4 mt-6 mb-2">
+                        <div class="text-green-200 uppercase text-xs font-semibold tracking-wider nav-text">Communication</div>
+                    </div>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-envelope"></i>
+                        <span class="nav-text ml-3">Messaging</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-headset"></i>
+                        <span class="nav-text ml-3">Support Tickets</span>
+                    </a>
+                    
+                    <div class="px-4 mt-6 mb-2">
+                        <div class="text-green-200 uppercase text-xs font-semibold tracking-wider nav-text">Settings</div>
+                    </div>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-users-cog"></i>
+                        <span class="nav-text ml-3">User Management</span>
+                    </a>
+                    <a href="#" class="nav-item flex items-center px-4 py-3 text-sm hover:bg-green-700">
+                        <i class="fas fa-cog"></i>
+                        <span class="nav-text ml-3">System Settings</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-green-700">
+                <div class="flex items-center">
+                    <img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 rounded-full">
+                    <div class="ml-3 nav-text">
+                        <div class="text-sm font-medium">Admin User</div>
+                        <div class="text-xs text-green-200">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="content" class="content flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm z-10">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <div class="flex items-center">
+                        <button id="mobileMenuBtn" class="mobile-menu-btn mr-4 text-gray-600 focus:outline-none hidden">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h1 class="text-xl font-semibold text-gray-800">Dashboard Overview</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="text-gray-600 focus:outline-none">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <button class="text-gray-600 focus:outline-none">
+                                <i class="fas fa-question-circle text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <button id="userMenuBtn" class="flex items-center text-gray-800 focus:outline-none">
+                                <span class="mr-2 hidden md:block">Admin User</span>
+                                <img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 rounded-full">
+                            </button>
+                            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 overflow-y-auto p-4 bg-gray-50">
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-school text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-gray-500">Registered Schools</div>
+                                <div class="text-2xl font-bold">1,248</div>
+                                <div class="text-xs text-green-500">+12 this week</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-gray-500">Active Clubs</div>
+                                <div class="text-2xl font-bold">876</div>
+                                <div class="text-xs text-blue-500">+24 this week</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                                <i class="fas fa-upload text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-gray-500">Student Uploads</div>
+                                <div class="text-2xl font-bold">3,421</div>
+                                <div class="text-xs text-purple-500">+312 this week</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-tree text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-gray-500">Trees Planted</div>
+                                <div class="text-2xl font-bold">24,876</div>
+                                <div class="text-xs text-yellow-500">1,240 this term</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-red-100 text-red-600">
+                                <i class="fas fa-brain text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-gray-500">Wisdom Entries</div>
+                                <div class="text-2xl font-bold">5,632</div>
+                                <div class="text-xs text-red-500">+87 this week</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-indigo-100 text-indigo-600">
+                                <i class="fas fa-globe-africa text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-gray-500">Countries</div>
+                                <div class="text-2xl font-bold">14</div>
+                                <div class="text-xs text-indigo-500">3 new regions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Activity Feed -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <!-- Activity Chart -->
+                    <div class="lg:col-span-2 bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Weekly Activity Overview</h2>
+                            <div class="flex space-x-2">
+                                <button class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded">This Week</button>
+                                <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded">This Month</button>
+                                <button class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded">All Time</button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Recent Activity</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-800">New submission from Green Hills Academy</p>
+                                    <p class="text-xs text-gray-500">Cultural Storytelling - 2 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <i class="fas fa-tree"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-800">Tree planting report from Moringa School</p>
+                                    <p class="text-xs text-gray-500">Conservation Activity - 4 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                    <i class="fas fa-brain"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-800">New wisdom entry approved</p>
+                                    <p class="text-xs text-gray-500">Indigenous Knowledge - 6 hours ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-800">Leaderboard updated for Nairobi County</p>
+                                    <p class="text-xs text-gray-500">Points System - 1 day ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                                    <i class="fas fa-school"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-800">New school registered in Rwanda</p>
+                                    <p class="text-xs text-gray-500">School Management - 2 days ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard and Regional Performance -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Top Schools Leaderboard -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Top Schools Leaderboard</h2>
+                            <button class="text-green-600 text-sm font-medium">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <span class="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold">1</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Green Hills Academy</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">Kigali, Rwanda</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-semibold text-gray-900">4,876</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <span class="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">2</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Moringa School</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">Nairobi, Kenya</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-semibold text-gray-900">4,532</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <span class="w-6 h-6 rounded-full bg-amber-600 flex items-center justify-center text-white font-bold">3</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">African Leadership Academy</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">Johannesburg, SA</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-semibold text-gray-900">4,210</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <span class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-bold">4</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Lighthouse Academy</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">Lagos, Nigeria</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-semibold text-gray-900">3,987</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <span class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-bold">5</span>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">Ubuntu Secondary</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500">Cape Town, SA</div>
+                                        </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <div class="text-sm font-semibold text-gray-900">3,765</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Regional Performance -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Regional Performance</h2>
+                            <div class="relative">
+                                <select class="block appearance-none bg-gray-100 border border-gray-200 text-gray-700 py-1 px-3 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 text-sm">
+                                    <option>This Week</option>
+                                    <option>This Month</option>
+                                    <option>This Term</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down text-xs"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="regionChart"></canvas>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <div class="text-sm text-green-800 font-medium">Top Region</div>
+                                <div class="text-lg font-bold text-green-600">Nairobi, Kenya</div>
+                                <div class="text-xs text-green-500">+12% from last week</div>
+                            </div>
+                            <div class="bg-blue-50 p-3 rounded-lg">
+                                <div class="text-sm text-blue-800 font-medium">Most Improved</div>
+                                <div class="text-lg font-bold text-blue-600">Kigali, Rwanda</div>
+                                <div class="text-xs text-blue-500">+24% from last week</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wisdom Vault and Content Management -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Wisdom Vault Status -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Wisdom Vault Status</h2>
+                            <button class="text-green-600 text-sm font-medium">Manage Vault</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4 mb-4">
+                            <div class="bg-purple-50 p-3 rounded-lg text-center">
+                                <div class="text-2xl font-bold text-purple-600">124</div>
+                                <div class="text-xs text-purple-800">Pending Review</div>
+                            </div>
+                            <div class="bg-green-50 p-3 rounded-lg text-center">
+                                <div class="text-2xl font-bold text-green-600">5,508</div>
+                                <div class="text-xs text-green-800">Approved</div>
+                            </div>
+                            <div class="bg-red-50 p-3 rounded-lg text-center">
+                                <div class="text-2xl font-bold text-red-600">32</div>
+                                <div class="text-xs text-red-800">Rejected</div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm font-medium text-gray-700">Audio Stories</div>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500">45%</div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm font-medium text-gray-700">Text Entries</div>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-green-600 h-2 rounded-full" style="width: 68%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500">68%</div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm font-medium text-gray-700">Photo Records</div>
+                                <div class="w-1/2 bg-gray-200 rounded-full h-2">
+                                    <div class="bg-purple-600 h-2 rounded-full" style="width: 32%"></div>
+                                </div>
+                                <div class="text-xs text-gray-500">32%</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Weekly Content -->
+                    <div class="bg-white rounded-lg shadow p-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-lg font-semibold text-gray-800">Weekly Content</h2>
+                            <button class="bg-green-600 text-white px-3 py-1 rounded text-sm font-medium">Add Content</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-start p-3 bg-blue-50 rounded-lg">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between">
+                                        <p class="text-sm font-medium text-gray-800">Week 12: Water Conservation</p>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Published</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">PDF, Video, Quiz | English, Swahili</p>
+                                    <div class="mt-2 flex space-x-2">
+                                        <span class="px-2 py-1 text-xs rounded-full bg-white text-gray-700">Conservation</span>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-white text-gray-700">Grades 4-6</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 bg-green-50 rounded-lg">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                    <i class="fas fa-video"></i>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between">
+                                        <p class="text-sm font-medium text-gray-800">Week 13: Cultural Storytelling</p>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Scheduled</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Video, Activity Guide | English, French</p>
+                                    <div class="mt-2 flex space-x-2">
+                                        <span class="px-2 py-1 text-xs rounded-full bg-white text-gray-700">Culture</span>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-white text-gray-700">All Grades</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 bg-purple-50 rounded-lg">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                    <i class="fas fa-question-circle"></i>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <div class="flex justify-between">
+                                        <p class="text-sm font-medium text-gray-800">Week 14: Eco-Innovation</p>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">Draft</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500">Quiz, Project Guide | English</p>
+                                    <div class="mt-2 flex space-x-2">
+                                        <span class="px-2 py-1 text-xs rounded-full bg-white text-gray-700">Innovation</span>
+                                        <span class="px-2 py-1 text-xs rounded-full bg-white text-gray-700">Grades 7-9</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        // User menu toggle
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userMenu = document.getElementById('userMenu');
+        
+        userMenuBtn.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenuBtn.contains(e.target) && !userMenu.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Charts
+        // Activity Chart
+        const activityCtx = document.getElementById('activityChart').getContext('2d');
+        const activityChart = new Chart(activityCtx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [
+                    {
+                        label: 'Uploads',
+                        data: [120, 190, 170, 220, 180, 150, 200],
+                        borderColor: '#4F46E5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Activities',
+                        data: [80, 120, 140, 170, 150, 110, 130],
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Regional Chart
+        const regionCtx = document.getElementById('regionChart').getContext('2d');
+        const regionChart = new Chart(regionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Nairobi', 'Kigali', 'Lagos', 'Cape Town', 'Accra'],
+                datasets: [{
+                    label: 'Activity Points',
+                    data: [1200, 900, 750, 600, 500],
+                    backgroundColor: [
+                        'rgba(79, 70, 229, 0.7)',
+                        'rgba(16, 185, 129, 0.7)',
+                        'rgba(234, 88, 12, 0.7)',
+                        'rgba(220, 38, 38, 0.7)',
+                        'rgba(59, 130, 246, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(79, 70, 229, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(234, 88, 12, 1)',
+                        'rgba(220, 38, 38, 1)',
+                        'rgba(59, 130, 246, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Simulate loading
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.chart-container canvas').forEach(canvas => {
+                    canvas.style.opacity = '1';
+                });
+            }, 300);
+        });
+    </script>
+</body>
+</html>
