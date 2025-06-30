@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Protectors Portal | School Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom CSS for elements Tailwind can't handle easily */
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .sidebar-collapsed {
+            transform: translateX(-90%);
+        }
+        .sidebar-collapsed:hover {
+            transform: translateX(0);
+        }
+        .content-area {
+            transition: margin-left 0.3s ease;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+                height: 100vh;
+            }
+            .sidebar-open {
+                transform: translateX(0);
+            }
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 40;
+            }
+            .overlay-open {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Top Navigation Bar -->
+    <nav class="bg-green-600 text-white shadow-md fixed top-0 left-0 right-0 z-30">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <button id="sidebarToggle" class="md:hidden text-xl focus:outline-none">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <img src="https://via.placeholder.com/40" alt="School Logo" class="h-8 w-8 rounded-full">
+                    <span class="font-bold text-lg">Green Valley School</span>
+                </div>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="relative">
+                    <button id="notificationBtn" class="text-xl focus:outline-none relative">
+                        <i class="far fa-bell"></i>
+                        <span class="notification-badge bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                    </button>
+                    <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-72 bg-white text-gray-800 rounded-md shadow-lg py-1 z-50">
+                        <div class="px-4 py-2 border-b">
+                            <h3 class="font-bold">Notifications</h3>
+                        </div>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">New module available</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">You earned a badge!</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-100">Message from mentor</a>
+                        <div class="px-4 py-2 border-t text-center">
+                            <a href="#" class="text-green-600 text-sm font-medium">View All</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-2">
+                    <img src="https://via.placeholder.com/40" alt="User" class="h-8 w-8 rounded-full">
+                    <span>Teacher</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar bg-white text-gray-800 w-64 fixed top-0 bottom-0 left-0 shadow-lg pt-16 z-20">
+        <div class="overflow-y-auto h-full pb-20">
+            <div class="px-4 py-6">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="relative">
+                        <svg class="w-16 h-16" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#e6e6e6" stroke-width="2"></circle>
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="100" stroke-dashoffset="25" class="progress-ring-circle"></circle>
+                        </svg>
+                        <span class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-sm font-bold">75%</span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold">Progress</h3>
+                        <p class="text-sm text-gray-600">3/4 modules</p>
+                    </div>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 text-green-600 bg-green-50 border-l-4 border-green-600">
+                            <i class="fas fa-tachometer-alt w-6 mr-3 text-center"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                            <i class="fas fa-book w-6 mr-3 text-center"></i>
+                            <span>Modules</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                            <i class="fas fa-upload w-6 mr-3 text-center"></i>
+                            <span>Uploads</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                            <i class="fas fa-seedling w-6 mr-3 text-center"></i>
+                            <span>WISDOM Vault</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                            <i class="fas fa-trophy w-6 mr-3 text-center"></i>
+                            <span>Leaderboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                            <i class="fas fa-envelope w-6 mr-3 text-center"></i>
+                            <span>Messages</span>
+                            <span class="ml-auto bg-green-500 text-white text-xs px-2 py-1 rounded-full">2</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-gray-100">
+                            <i class="fas fa-cog w-6 mr-3 text-center"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gray-50 border-t">
+            <div class="flex items-center space-x-3">
+                <img src="https://via.placeholder.com/40" alt="User" class="h-10 w-10 rounded-full">
+                <div>
+                    <p class="font-medium">Ms. Johnson</p>
+                    <p class="text-xs text-gray-600">Teacher</p>
+                </div>
+                <button class="ml-auto text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Main Content -->
+    <main id="content" class="content-area ml-0 md:ml-64 pt-16 min-h-screen">
+        <div class="container mx-auto px-4 py-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-md p-6 text-white mb-6">
+                <h1 class="text-2xl font-bold mb-2">Welcome to Planet Protectors Portal!</h1>
+                <p class="mb-4">Empowering young eco-warriors to protect our planet through climate action and cultural wisdom.</p>
+                <div class="flex flex-wrap gap-2">
+                    <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">Eco-Warrior</span>
+                    <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">Tree Champion</span>
+                    <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs">Waste Warrior</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Current Module -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="bg-green-100 px-4 py-3 border-b">
+                        <h2 class="font-bold text-green-800">Current Module</h2>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-start mb-4">
+                            <div class="bg-green-100 text-green-800 rounded-lg p-3 mr-4">
+                                <i class="fas fa-book-open text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold">Module 3: Water Conservation</h3>
+                                <p class="text-sm text-gray-600">Due: May 15, 2023</p>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                            <div class="bg-green-600 h-2 rounded-full" style="width: 65%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">65% completed</p>
+                        <div class="flex space-x-2">
+                            <button class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                                <i class="fas fa-play mr-2"></i> Continue
+                            </button>
+                            <button class="bg-white border border-green-600 text-green-600 hover:bg-green-50 py-2 px-4 rounded-lg text-sm font-medium">
+                                <i class="fas fa-download mr-2"></i> PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Challenges -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="bg-blue-100 px-4 py-3 border-b">
+                        <h2 class="font-bold text-blue-800">Upcoming Challenges</h2>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="bg-blue-100 text-blue-800 rounded-lg p-2 mr-3">
+                                    <i class="fas fa-calendar-day"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Plastic-Free Week</h3>
+                                    <p class="text-xs text-gray-600">Starts: May 20, 2023</p>
+                                    <p class="text-xs text-gray-600">Points: 50</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-yellow-100 text-yellow-800 rounded-lg p-2 mr-3">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Tree Planting Day</h3>
+                                    <p class="text-xs text-gray-600">Starts: June 5, 2023</p>
+                                    <p class="text-xs text-gray-600">Points: 100</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                            View All Challenges
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="bg-purple-100 px-4 py-3 border-b">
+                        <h2 class="font-bold text-purple-800">Quick Actions</h2>
+                    </div>
+                    <div class="p-4 grid grid-cols-2 gap-3">
+                        <button class="bg-green-50 hover:bg-green-100 border border-green-200 text-green-800 p-3 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-upload text-xl mb-2"></i>
+                            <span class="text-xs font-medium">Upload Report</span>
+                        </button>
+                        <button class="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 p-3 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-plus-circle text-xl mb-2"></i>
+                            <span class="text-xs font-medium">New Entry</span>
+                        </button>
+                        <button class="bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 text-yellow-800 p-3 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-trophy text-xl mb-2"></i>
+                            <span class="text-xs font-medium">Leaderboard</span>
+                        </button>
+                        <button class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-800 p-3 rounded-lg flex flex-col items-center">
+                            <i class="fas fa-envelope text-xl mb-2"></i>
+                            <span class="text-xs font-medium">Messages</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Announcements -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden md:col-span-2">
+                    <div class="bg-orange-100 px-4 py-3 border-b">
+                        <h2 class="font-bold text-orange-800">Recent Announcements</h2>
+                    </div>
+                    <div class="p-4">
+                        <div class="space-y-4">
+                            <div class="flex items-start p-3 hover:bg-orange-50 rounded-lg">
+                                <div class="bg-orange-100 text-orange-800 rounded-lg p-2 mr-3">
+                                    <i class="fas fa-bullhorn"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">New Mentorship Program</h3>
+                                    <p class="text-sm text-gray-600">We're excited to announce our new mentorship matching system. Sign up now!</p>
+                                    <p class="text-xs text-gray-500 mt-1">Posted: May 1, 2023</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 hover:bg-orange-50 rounded-lg">
+                                <div class="bg-orange-100 text-orange-800 rounded-lg p-2 mr-3">
+                                    <i class="fas fa-award"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Congratulations!</h3>
+                                    <p class="text-sm text-gray-600">Your school has earned the Bronze Eco-School certification!</p>
+                                    <p class="text-xs text-gray-500 mt-1">Posted: April 28, 2023</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-4 w-full bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                            View All Announcements
+                        </button>
+                    </div>
+                </div>
+
+                <!-- School Progress -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="bg-teal-100 px-4 py-3 border-b">
+                        <h2 class="font-bold text-teal-800">School Progress</h2>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <div>
+                                <p class="text-3xl font-bold text-teal-600">1,250</p>
+                                <p class="text-sm text-gray-600">Eco-Points</p>
+                            </div>
+                            <div class="bg-teal-600 text-white rounded-full p-3">
+                                <i class="fas fa-leaf text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Modules Completed</span>
+                                    <span>3/8</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-teal-600 h-2 rounded-full" style="width: 37.5%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>Challenges Completed</span>
+                                    <span>5/12</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-teal-600 h-2 rounded-full" style="width: 41.6%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>WISDOM Entries</span>
+                                    <span>7</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-teal-600 h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                            View Detailed Progress
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Uploads -->
+            <div class="mt-8">
+                <h2 class="text-xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-history mr-2 text-gray-600"></i>
+                    Recent Uploads
+                </h2>
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-image text-green-600"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">Tree Planting Activity</div>
+                                        <div class="text-sm text-gray-500">Grade 5</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        May 2, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Approved
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-green-600 hover:text-green-900 mr-3">View</a>
+                                        <a href="#" class="text-blue-600 hover:text-blue-900">Download</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-file-pdf text-blue-600"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">Water Conservation Report</div>
+                                        <div class="text-sm text-gray-500">Grade 6</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        April 28, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            Pending
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-green-600 hover:text-green-900 mr-3">View</a>
+                                        <a href="#" class="text-blue-600 hover:text-blue-900">Download</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-microphone text-purple-600"></i>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900">Student Interview</div>
+                                        <div class="text-sm text-gray-500">Grade 7</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        April 25, 2023
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            Rejected
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <a href="#" class="text-green-600 hover:text-green-900 mr-3">View</a>
+                                        <a href="#" class="text-blue-600 hover:text-blue-900">Resubmit</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-4 py-3 bg-gray-50 text-right">
+                        <button class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm font-medium">
+                            View All Uploads
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Toggle sidebar on mobile
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const overlay = document.getElementById('overlay');
+        
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('sidebar-open');
+            overlay.classList.toggle('overlay-open');
+        });
+        
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('overlay-open');
+        });
+        
+        // Toggle notifications dropdown
+        const notificationBtn = document.getElementById('notificationBtn');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        
+        notificationBtn.addEventListener('click', () => {
+            notificationDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationBtn.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                notificationDropdown.classList.add('hidden');
+            }
+        });
+        
+        // Simulate loading data from local storage
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if there's cached data
+            const cachedData = localStorage.getItem('pppDashboardData');
+            if (cachedData) {
+                console.log('Loaded data from cache');
+                // In a real app, you would use this data to populate the UI
+            } else {
+                console.log('No cached data found, loading fresh data');
+                // Simulate fetching fresh data
+                setTimeout(() => {
+                    // Cache the data
+                    localStorage.setItem('pppDashboardData', JSON.stringify({
+                        lastUpdated: new Date().toISOString(),
+                        modules: [],
+                        announcements: []
+                    }));
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
